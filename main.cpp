@@ -5,16 +5,49 @@
 class Rover
 {
 public:
-  char direction;
-  std::map<char, int> position;
-  char orientationMap[4] = {'N', 'E', 'S', 'W'};
+  std::string direction;
+  std::map<std::string, int> position;
+  std::string orientationMap[4] = {"N", "E", "S", "W"};
+  std::map<std::string, int> range;
   Rover(int operatingRange)
   {
     direction = 'N';
-    position = {{'x', 0}, {'y', 0}};
+    position = {{"x", 0}, {"y", 0}};
+    range = {{"x", operatingRange}, {"y", operatingRange}};
   }
   void moveForward()
   {
+    int xyDirection = findIndex(orientationMap, direction);
+    std::string toMove;
+    int toMoveSign;
+    if (xyDirection % 2)
+    {
+      toMove = "x";
+      if (xyDirection == 1)
+      {
+        toMoveSign = 1;
+      }
+      else
+      {
+        toMoveSign = -1;
+      }
+    }
+    else
+    {
+      toMove = "y";
+      if (xyDirection == 0)
+      {
+        toMoveSign = 1;
+      }
+      else
+      {
+        toMoveSign = -1;
+      }
+    }
+    if (checkInRange(toMove, toMoveSign))
+    {
+      position[toMove] = position[toMove] + toMoveSign;
+    }
   }
   void changeDirection(char turn)
   {
@@ -32,10 +65,25 @@ public:
     direction = orientationMap[newDirectionIndex];
     std::cout << "New direction index :" << ((newDirectionIndex) % 4) << std::endl;
   }
-  void checkInRange()
+  bool checkInRange(std::string toMove, int toMoveSign)
   {
+    if (toMoveSign == 1)
+    {
+      if (position[toMove] + toMoveSign > range[toMove])
+      {
+        return false;
+      }
+    }
+    else
+    {
+      if (position[toMove] + toMoveSign < 0)
+      {
+        return false;
+      }
+    }
+    return true;
   }
-  int findIndex(char arr[], char key)
+  int findIndex(std::string arr[], std::string key)
   {
     int n = 4;
     for (int i = 0; i < n; i++)
@@ -77,7 +125,7 @@ int main()
     case '3':
       return 0;
     }
-    std::cout << rover.direction << rover.position['x'] << "," << rover.position['y'] << std::endl;
+    std::cout << rover.direction << rover.position["x"] << "," << rover.position["y"] << std::endl;
   }
 
   system("pause"); // <----------------------------------
